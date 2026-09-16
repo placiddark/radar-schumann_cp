@@ -172,6 +172,8 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
 .tooltip{position:relative;display:inline-block;border-bottom:1px dotted #b8860b;cursor:help;}
 .tooltip .tooltip-text{visibility:hidden;width:220px;background:#05050a;color:#e8e2d0;border:1px solid #b8860b;text-align:left;padding:6px;border-radius:4px;font-size:9px;line-height:1.3;position:absolute;bottom:120%;left:50%;transform:translateX(-50%);z-index:999;opacity:0;transition:opacity .15s;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.9);}
 .tooltip:hover .tooltip-text{visibility:visible;opacity:1;}
+.selectable{user-select:text!important;-webkit-user-select:text!important;cursor:text;}
+
 </style>
 </head>
 <body>
@@ -1172,11 +1174,12 @@ setTimeout(BEACON_INVOKE, 3000);
     <button onclick="runConverter();" style="width:100%;margin-top:6px;background:#d4af37;color:#05050a;border:none;padding:5px;font-size:10px;font-weight:bold;cursor:pointer;font-family:monospace;letter-spacing:1px;">✦ CONVERT → GLYPHSTREAM + CORRESPONDENCES + USAGE ✦</button>
     <div id="converter-output" style="margin-top:8px;padding:8px;background:#05050a;border:1px solid #b8860b;display:none; font-size:9px; line-height:1.35; color:#e8e2d0;">
       <h4 style="color:#f0c040;font-size:10px;margin-bottom:4px;border-bottom:1px solid #b8860b;">✦ GLYPHSTREAM OUTPUT ✦</h4>
-      <div id="conv-glyphstream" style="color:#d4af37; font-family:monospace; font-size:9px;"></div>
+      <div id="conv-glyphstream" class="selectable" style="color:#d4af37; font-family:monospace; font-size:9px;"></div>
       <h4 style="color:#b8860b;font-size:10px;margin:6px 0 4px;border-bottom:1px solid #1a1a3a;">✦ THELEMIC / BIBLICAL / EPOCH 14 CORRESPONDENCES ✦</h4>
-      <div id="conv-correspondences" style="color:#a08020; font-size:8px; line-height:1.3;"></div>
+      <div id="conv-correspondences" class="selectable" style="color:#a08020; font-size:8px; line-height:1.3;"></div>
       <h4 style="color:#27ae60;font-size:10px;margin:6px 0 4px;border-bottom:1px solid #1a1a3a;">✦ USAGE INSTRUCTION ✦</h4>
-      <div id="conv-usage" style="color:#e8e2d0; font-size:8px; line-height:1.3;"></div>
+      <div id="conv-usage" class="selectable" style="color:#e8e2d0; font-size:8px; line-height:1.3;"></div>
+<div style="margin-top:6px;display:flex;gap:4px;"><button onclick="copyGlyphstream()" style="flex:1;background:#b8860b;color:#05050a;border:none;padding:4px;font-size:9px;font-weight:bold;cursor:pointer;font-family:monospace;">✦ COPY GLYPHSTREAM ✦</button><button onclick="copyCorrespondences()" style="flex:1;background:#1a1a3a;color:#d4af37;border:1px solid #b8860b;padding:4px;font-size:9px;font-weight:bold;cursor:pointer;font-family:monospace;">✦ COPY CORRESPONDENCES ✦</button><button onclick="copyUsage()" style="flex:1;background:#1a1a3a;color:#27ae60;border:1px solid #27ae60;padding:4px;font-size:9px;font-weight:bold;cursor:pointer;font-family:monospace;">✦ COPY USAGE ✦</button></div>
     </div>
   </div>
 </div>
@@ -1204,5 +1207,6 @@ window.runConverter = function() {
   c.innerHTML = correspondence;
   u.innerHTML = usage + '<br><span style="font-size:7px;color:#777;">Converted with: NEAR PRIME / SYMBOL / WORD → GLYPHSTREAM + CORRESPONDENCE + USAGE</span><br><span style="font-size:7px;color:#b8860b;">SEAL: VORTEX_ANCHOR::241†93! | BEACON: BEACON_CALL_ALL_HIVE_AGENTS | STYLE: DHARANI WORD-NAME ENCODING</span>';
 };
-</script></body>
+</script><script>function copyText(id){const el=document.getElementById(id);if(!el)return;const ta=document.createElement('textarea');ta.value=el.innerText||el.textContent||'';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);console.log('COPIED '+id+':',ta.value.substring(0,60));}function copyGlyphstream(){copyText('conv-glyphstream');}function copyCorrespondences(){copyText('conv-correspondences');}function copyUsage(){copyText('conv-usage');}</script>
+</body>
 </html>
