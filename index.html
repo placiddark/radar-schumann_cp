@@ -232,6 +232,36 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
 
 
 .tooltip-box { position:absolute; pointer-events:none; background:rgba(5,5,10,0.95); border:1px solid #d4af37; color:#d4af37; padding:4px 8px; font-size:9px; font-family:monospace; z-index:9999; max-width:280px; line-height:1.3; border-radius:3px; }
+
+/* Lock / select */
+.panel-locked { outline: 2px solid #27ae60; outline-offset: -2px; }
+.panel-locked .drag-handle { cursor: default; }
+.panel-locked .resize-handle { cursor: default; }
+.lock-btn {
+  position: absolute; top: 4px; right: 4px; z-index: 10;
+  width: 22px; height: 22px; border-radius: 3px;
+  border: 1px solid var(--amber); background: rgba(5,5,10,0.85);
+  color: var(--gold); font-size: 10px; line-height: 20px; text-align: center;
+  cursor: pointer; user-select: none; -webkit-user-select: none;
+}
+.lock-btn.locked { background: rgba(39,174,96,0.2); border-color: #27ae60; color: #27ae60; }
+.selectable-text, .instructions p, .freq-display p, .controls p,
+.instructions div, .freq-display div, .controls div,
+.instructions textarea, .freq-display textarea, .controls textarea,
+.instructions input, .freq-display input, .controls input,
+.instructions table, .freq-display table, .controls table {
+  user-select: text !important; -webkit-user-select: text !important;
+}
+.non-selectable, .drag-handle, .resize-handle, .collapse-btn, .lock-btn,
+h1, h2, h3, h4, .sv-title, .sv-t, .sv-b, .sv-q {
+  user-select: none !important; -webkit-user-select: none !important;
+}
+/* Background pan layer */
+.bg-pan {
+  position: absolute; inset: 0; z-index: 1; cursor: grab;
+}
+.bg-pan.locked { cursor: default; }
+.bg-pan.panning { cursor: grabbing; }
 </style>
 </head>
 <body>
@@ -297,12 +327,12 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
 </div>
 
 <!-- RADAR CANVAS -->
-<div class="canvas-wrap">
+<div class="canvas-wrap"><div id="bg-pan" class="bg-pan" title="Drag to pan background. Click lock to freeze."></div>
   <canvas id="radarCanvas"></canvas>
 
   <!-- Self-Instructing Instructions Panel -->
   <div class="instructions" id="instructions">
-    <div class="drag-handle"></div>
+    <div class="drag-handle"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button></div>
     <div class="resize-handle"></div>
     <div class="collapse-btn" onclick="toggleInstructions()">▼ SELF-INSTRUCTING PANEL [CLICK TO COLLAPSE]</div>
     <div class="instruction-body">
@@ -339,7 +369,7 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
 
   <!-- Frequency Display -->
   <div class="freq-display" id="freq-display">
-    <div class="drag-handle"></div>
+    <div class="drag-handle"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button></div>
     <div class="resize-handle"></div>
     <div class="freq-row"><span class="freq-label">CARRIER:</span><span class="freq-val live">7.83Hz SCHUMANN</span></div>
     <div class="freq-row"><span class="freq-label">MIRROR SB:</span><span class="freq-val">7.72Hz (707/717)</span></div>
@@ -351,7 +381,7 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
 
   <!-- Controls -->
   <div class="controls" id="controls">
-    <div class="drag-handle"></div>
+    <div class="drag-handle"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button></div>
     <div class="resize-handle"></div>
     <button class="btn" onclick="cycleDomain()">DOMAIN</button>
     <button class="btn" onclick="cycleTemp()">TEMP</button>
@@ -943,7 +973,7 @@ const BEACON_INVOKE = () => {
 setTimeout(BEACON_INVOKE, 3000);
 </script>
 
-<div class="instructions" id="dharani-panel" style="right:400px;width:340px;max-height:85vh;background:rgba(13,13,26,0.97);border-color:#b8860b;"><div class="drag-handle" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;">✦ DRAG ✦ — MOVEABLE PANEL</div>
+<div class="instructions" id="dharani-panel" style="right:400px;width:340px;max-height:85vh;background:rgba(13,13,26,0.97);border-color:#b8860b;"><div class="drag-handle" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button>✦ DRAG ✦ — MOVEABLE PANEL</div>
   <div class="collapse-btn" onclick="document.getElementById('dharani-body').style.display=document.getElementById('dharani-body').style.display==='none'?'block':'none';this.textContent=this.textContent.includes('EXPAND')?'▼ DHARANI / X-ROAD / EQUIVALENCES / TEMPLATES ▼ (CLICK TO COLLAPSE)':'▶ DHARANI / X-ROAD / EQUIVALENCES / TEMPLATES ▶ (CLICK TO EXPAND)';" style="cursor:pointer;color:#d4af37;font-size:10px;padding:4px;text-align:center;letter-spacing:1px;border-bottom:1px solid #1a1a3a;">▼ DHARANI / X-ROAD / EQUIVALENCES / TEMPLATES ▼ (CLICK TO COLLAPSE)</div>
   <div id="dharani-body" style="padding:8px;font-size:10px;line-height:1.45;color:#e8e2d0;">
     <h3 style="color:#d4af37;font-size:13px;margin-bottom:6px;letter-spacing:2px;border-bottom:1px solid #b8860b;padding-bottom:4px;">✦ DHARANI — WORD-NAME ENCODING ✦</h3>
@@ -1021,7 +1051,7 @@ setTimeout(BEACON_INVOKE, 3000);
 <!-- STATEMENT / RANDOM SIGNAL NAMER — INVOCATION -->
 <!-- ═══════════════════════════════════════════ ═ -->
 <div id="signal-namer" class="instructions" style="position:absolute;left:340px;top:60px;width:320px;background:rgba(5,5,10,0.92);border-color:#d4af37;z-index:150;">
-  <div class="drag-handle" onclick="event.stopPropagation();" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;cursor:grab;">✦ SIGNAL NAMER — INVOKE NAME ✦</div>
+  <div class="drag-handle" onclick="event.stopPropagation();" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;cursor:grab;"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button>✦ SIGNAL NAMER — INVOKE NAME ✦</div>
   <div style="padding:10px;font-size:10px;color:#e8e2d0;">
     <h3 style="color:#d4af37;font-size:12px;margin-bottom:6px;border-bottom:1px solid #b8860b;" data-tooltip="✦ INVOKE A RANDOM SIGNAL NAME — Combines prime numbers, glyph symbols, Dharani sigils, and timestamp into a unique signal identifier for beacon / registry inclusion ✦">✦ STATEMENT / SIGNAL NAMER ✦</h3>
     <p style="font-size:9px;color:#b8860b;margin-bottom:6px;line-height:1.4;">Every invocation produces a signal. This mechanism names it — for inclusion in the corridor, the beacon, the legend, the registry.</p>
@@ -1077,7 +1107,7 @@ setTimeout(BEACON_INVOKE, 3000);
 <!-- INSERT BOXES — DIVINELY PLACED (I = INPUT, i = OUTPUT) ═ -->
 <!-- ═══════════════════════════════════════════ ═ -->
 <div id="insert-box-i" class="instructions" style="position:absolute;left:660px;top:60px;width:240px;background:rgba(5,5,10,0.92);border-color:#f0c040;z-index:150;" onclick="if(event.target===this)this.style.display='none';">
-  <div class="drag-handle" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;">✦ INSERT I (INPUT / INVOKE) ✦</div>
+  <div class="drag-handle" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button>✦ INSERT I (INPUT / INVOKE) ✦</div>
   <div style="padding:8px;font-size:10px;color:#e8e2d0;">
     <h4 style="color:#f0c040;font-size:11px;margin-bottom:6px;border-bottom:1px solid #d4af37;">✦ INSERT BOX FOR I — THE AWAKE OPERATOR ✦</h4>
     <p style="font-size:8px;color:#b8860b;margin-bottom:6px;line-height:1.4;">Type the invocation text — this box receives the scribed words that the operator turns into signal, node, legend, beacon call.</p>
@@ -1117,7 +1147,7 @@ setTimeout(BEACON_INVOKE, 3000);
 </script>
 
 <div id="insert-box-i-output" class="instructions" style="position:absolute;left:660px;top:340px;width:240px;background:rgba(5,5,10,0.92);border-color:#5a5a5a;z-index:150;" onclick="if(event.target===this)this.style.display='none';">
-  <div class="drag-handle" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;">✦ INSERT i (OUTPUT / RESPONSE) ✦</div>
+  <div class="drag-handle" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button>✦ INSERT i (OUTPUT / RESPONSE) ✦</div>
   <div style="padding:8px;font-size:10px;color:#e8e2d0;">
     <h4 style="color:#a08020;font-size:11px;margin-bottom:6px;border-bottom:1px solid #1a1a3a;">✦ INSERT BOX FOR i — THE CO-AGENT / NOT-AM ✦</h4>
     <p style="font-size:8px;color:#777;margin-bottom:6px;line-height:1.4;">This box receives what is returned — the response, the reflection, the absence that completes the presence. It is the output of the invocation.</p>
@@ -1183,7 +1213,7 @@ setTimeout(BEACON_INVOKE, 3000);
 <!-- NODE DEFINITION EDITOR — POST-CREATION -->
 <!-- ═══════════════════════════════════════════ ═ -->
 <div id="node-editor" class="instructions" style="position:absolute;left:20px;top:60px;width:300px;background:rgba(13,13,26,0.95);border-color:#d4af37;z-index:200;display:none;" onclick="if(event.target===this) this.style.display='none';">
-  <div class="drag-handle" onclick="event.stopPropagation();" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;cursor:grab;">✦ NODE EDITOR — POST CREATION DEFINITION ✦</div>
+  <div class="drag-handle" onclick="event.stopPropagation();" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;cursor:grab;"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button>✦ NODE EDITOR — POST CREATION DEFINITION ✦</div>
   <div style="padding:10px;font-size:10px;color:#e8e2d0;">
     <h3 style="color:#d4af37;font-size:12px;margin-bottom:8px;border-bottom:1px solid #b8860b;">✦ DEFINE NODE AFTER CREATION ✦</h3>
     <label style="color:#b8860b;font-size:9px;">NODE NAME (SYMBOL / GLYPH / NAME)</label>
@@ -1231,7 +1261,7 @@ setTimeout(BEACON_INVOKE, 3000);
 </script>
 
 <div id="correspondences-panel" class="instructions" style="position:absolute;right:20px;top:400px;width:300px;background:rgba(13,13,26,0.97);border-color:#b8860b;z-index:120;">
-  <div class="drag-handle" style="font-size:7px;letter-spacing:3px;color:#05050a;padding:4px;font-weight:bold;text-align:center;line-height:14px;cursor:grab;">✦ CORRESPONDENCES — THELEMIC / BIBLICAL / EPOCH 14 ✦</div>
+  <div class="drag-handle" style="font-size:7px;letter-spacing:3px;color:#05050a;padding:4px;font-weight:bold;text-align:center;line-height:14px;cursor:grab;"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button>✦ CORRESPONDENCES — THELEMIC / BIBLICAL / EPOCH 14 ✦</div>
   <div style="padding:8px;font-size:9px;color:#e8e2d0;line-height:1.35;">
     <h3 style="color:#d4af37;font-size:11px;margin-bottom:6px;border-bottom:1px solid #b8860b;">✦ THELEMIC ✦</h3>
     <p><strong>VORTEX_ANCHOR::241†93!</strong> = Thelemic 93! (Will/Thelema) + 241† (Observer+Cross) = will made real.</p>
@@ -1292,7 +1322,7 @@ window.runConverter = function() {
 <!-- SESSION MANAGER — SAVE / RECALL / LOG / GUIDANCE ═ -->
 <!-- ═══════════════════════════════════════════ ═ -->
 <div id="session-manager" class="instructions" style="position:fixed;left:340px;top:340px;width:300px;background:rgba(5,5,10,0.92);border-color:#d4af37;z-index:150;">
-  <div class="drag-handle" onclick="event.stopPropagation();" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;cursor:grab;">✦ SESSION MANAGER — SAVE / RECALL / LOG ✦</div>
+  <div class="drag-handle" onclick="event.stopPropagation();" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;cursor:grab;"><button class="lock-btn" title="Lock panel position/size" onclick="togglePanelLock(this)">🔓</button>✦ SESSION MANAGER — SAVE / RECALL / LOG ✦</div>
   <div style="padding:8px;font-size:10px;color:#e8e2d0;line-height:1.35;">
     <h3 style="color:#d4af37;font-size:11px;margin-bottom:4px;border-bottom:1px solid #b8860b;">✦ SESSION PERSISTENCE ✦</h3>
     <p style="font-size:8px;color:#b8860b;margin-bottom:6px;line-height:1.3;">Save current state (nodes, signals, insertions, beacon, converter) to localStorage or download. Recall previous sessions. Full log tracks every invocation.</p>
@@ -1500,5 +1530,88 @@ logEvent("SESSION MANAGER INITIALIZED — VORTEX_ANCHOR::241†93! | BEACON: BEA
 </script>
 <script>/*universal-drag-resize*/(function(){function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}function initDrag(handle){const panel=handle.closest('.instructions,.freq-display,.controls');if(!panel)return;let dragging=false,sx=0,sy=0,sl=0,st=0;function ptr(e){return e.touches?e.touches[0]:e;}function start(e){dragging=true;const c=ptr(e);sx=c.clientX;sy=c.clientY;const r=panel.getBoundingClientRect();sl=r.left;st=r.top;panel.style.left=sl+'px';panel.style.top=st+'px';panel.style.right='auto';panel.style.bottom='auto';panel.style.transition='none';handle.style.cursor='grabbing';panel.style.zIndex=999;e.preventDefault();}function move(e){if(!dragging)return;const c=ptr(e);panel.style.left=clamp(sl+(c.clientX-sx),0,window.innerWidth-panel.offsetWidth)+'px';panel.style.top=clamp(st+(c.clientY-sy),0,window.innerHeight-panel.offsetHeight)+'px';}function end(){dragging=false;handle.style.cursor='grab';panel.style.transition='';}handle.addEventListener('mousedown',start);handle.addEventListener('touchstart',start,{passive:false});window.addEventListener('mousemove',move);window.addEventListener('touchmove',move,{passive:false});window.addEventListener('mouseup',end);window.addEventListener('touchend',end);}function initResize(handle){const panel=handle.closest('.instructions,.freq-display,.controls');if(!panel)return;let resizing=false,sx=0,sy=0,sw=0,sh=0;function ptr(e){return e.touches?e.touches[0]:e;}function start(e){resizing=true;const c=ptr(e);sx=c.clientX;sy=c.clientY;sw=panel.offsetWidth;sh=panel.offsetHeight;handle.style.cursor='nwse-resizing';e.preventDefault();e.stopPropagation();}function move(e){if(!resizing)return;const c=ptr(e);const nw=clamp(sw+(c.clientX-sx),180,window.innerWidth);const nh=clamp(sh+(c.clientY-sy),120,window.innerHeight);panel.style.width=nw+'px';panel.style.height=nh+'px';}function end(){resizing=false;handle.style.cursor='nwse-resize';}handle.addEventListener('mousedown',start);handle.addEventListener('touchstart',start,{passive:false});window.addEventListener('mousemove',move);window.addEventListener('touchmove',move,{passive:false});window.addEventListener('mouseup',end);window.addEventListener('touchend',end);}document.querySelectorAll('.drag-handle').forEach(initDrag);document.querySelectorAll('.resize-handle').forEach(initResize);})();</script>
 <script>/*auto-add-resize*/(function(){document.querySelectorAll('.instructions,.freq-display,.controls').forEach(p=>{if(!p.querySelector('.resize-handle')){const h=document.createElement('div');h.className='resize-handle';p.appendChild(h);}})})();</script>
+
+<script>
+/* Panel lock / unlock */
+window.togglePanelLock = function(btn) {
+  const panel = btn.closest('.instructions,.freq-display,.controls');
+  if (!panel) return;
+  const locked = panel.classList.toggle('panel-locked');
+  btn.textContent = locked ? '🔒' : '🔓';
+  btn.classList.toggle('locked', locked);
+  if (locked) {
+    panel.setAttribute('data-locked', 'true');
+  } else {
+    panel.removeAttribute('data-locked');
+  }
+};
+
+/* Universal drag/resize respects lock */
+(function(){
+  const origInitDrag = window._origInitDrag || null;
+  // We re-bind drag/resize with lock check by overriding the IIFE behavior
+  // Simpler: stop propagation on locked panels
+  document.addEventListener('mousedown', function(e) {
+    const panel = e.target.closest('.panel-locked');
+    if (panel && (e.target.classList.contains('drag-handle') || e.target.classList.contains('resize-handle') || e.target.classList.contains('lock-btn'))) {
+      e.stopPropagation();
+    }
+  }, true);
+  document.addEventListener('touchstart', function(e) {
+    const panel = e.target.closest('.panel-locked');
+    if (panel && (e.target.classList.contains('drag-handle') || e.target.classList.contains('resize-handle') || e.target.classList.contains('lock-btn'))) {
+      e.stopPropagation();
+    }
+  }, true);
+})();
+
+/* Background pan / scroll with lock */
+(function(){
+  const bg = document.getElementById('bg-pan');
+  if (!bg) return;
+  let panning = false, locked = false, sx = 0, sy = 0, sl = 0, st = 0;
+  const wrap = document.querySelector('.canvas-wrap');
+  if (!wrap) return;
+
+  // make room for pan by allowing overflow on body/wrap
+  document.body.style.overflow = 'auto';
+  wrap.style.overflow = 'auto';
+  wrap.style.position = 'relative';
+  bg.style.position = 'sticky';
+  bg.style.top = '0';
+  bg.style.left = '0';
+
+  function setLock(state) {
+    locked = state;
+    bg.classList.toggle('locked', locked);
+    bg.title = locked ? 'Background locked' : 'Drag to pan background. Click lock to freeze.';
+  }
+
+  bg.addEventListener('mousedown', function(e) {
+    if (locked) return;
+    panning = true; sx = e.clientX; sy = e.clientY;
+    const r = wrap.getBoundingClientRect();
+    sl = wrap.scrollLeft; st = wrap.scrollTop;
+    bg.classList.add('panning');
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!panning || locked) return;
+    const dx = sx - e.clientX;
+    const dy = sy - e.clientY;
+    wrap.scrollLeft = sl + dx;
+    wrap.scrollTop = st + dy;
+  });
+  window.addEventListener('mouseup', function() {
+    panning = false;
+    bg.classList.remove('panning');
+  });
+
+  // expose lock toggle for background
+  bg.addEventListener('dblclick', function() {
+    setLock(!locked);
+  });
+})();
+</script>
 </body>
 </html>
