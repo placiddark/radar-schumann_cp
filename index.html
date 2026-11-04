@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RADAR — Hive Control Panel for 707×717 Corridor</title>
+<title>Radar Schumann — Schumann Resonance Signal Architecture</title>
+<meta name="description" content="This discourse explores the Earth-ionosphere waveguide as a low-frequency signal medium. Schumann resonances (~7.83 Hz and harmonics) provide a naturally coherent carrier for ELF communications, ambient noise floor characterization, and geo-correlated timing channels. The project maps how these atmospheric standing waves can be modeled, detected, and potentially spoofed — bridging RF physics, GNSS timing, and signal-integrity attacks. Part of the Helkhem53 Signal Architect lattice.">
 <style>
 :root {
   --void: #05050a;
@@ -73,7 +74,7 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
 
 /* Self-Instructing Panel */
 .instructions {
-  position: absolute; cursor: grab; user-select: none; z-index: 100; border-radius: 4px;
+  position: absolute; user-select: none; z-index: 100; border-radius: 4px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.8); backdrop-filter: blur(8px);
 }
 .instructions .drag-handle {
@@ -81,6 +82,7 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
   border-top-left-radius: 4px; border-top-right-radius: 4px; cursor: grab;
 }
 .instructions .drag-handle:active { cursor: grabbing; }
+#instructions {
   top: 10px;
   right: 10px;
   width: 320px;
@@ -106,6 +108,16 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
   letter-spacing: 1px;
 }
 .instructions.collapsed .instruction-body { display: none; }
+.instructions .resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, var(--amber) 50%);
+  border-bottom-right-radius: 4px;
+}
 
 /* Frequency Display */
 .freq-display {
@@ -118,6 +130,28 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
   padding: 12px 16px;
   z-index: 20;
   font-size: 11px;
+}
+.freq-display .drag-handle {
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(90deg,#b8860b,#1a1a3a);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  cursor: grab;
+}
+.freq-display .drag-handle:active { cursor: grabbing; }
+.freq-display .resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, var(--amber) 50%);
+  border-bottom-right-radius: 4px;
 }
 .freq-display .freq-row { display: flex; justify-content: space-between; gap: 20px; padding: 2px 0; }
 .freq-display .freq-label { color: var(--muted); min-width: 160px; }
@@ -133,6 +167,28 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
   display: flex;
   gap: 8px;
   z-index: 20;
+}
+.controls .drag-handle {
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(90deg,#b8860b,#1a1a3a);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  cursor: grab;
+}
+.controls .drag-handle:active { cursor: grabbing; }
+.controls .resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, var(--amber) 50%);
+  border-bottom-right-radius: 4px;
 }
 .btn {
   background: var(--panel);
@@ -246,6 +302,8 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
 
   <!-- Self-Instructing Instructions Panel -->
   <div class="instructions" id="instructions">
+    <div class="drag-handle"></div>
+    <div class="resize-handle"></div>
     <div class="collapse-btn" onclick="toggleInstructions()">▼ SELF-INSTRUCTING PANEL [CLICK TO COLLAPSE]</div>
     <div class="instruction-body">
       <h3>⚡ RADAR — SELF-INSTRUCTING ⚡</h3>
@@ -280,7 +338,9 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
   </div>
 
   <!-- Frequency Display -->
-  <div class="freq-display">
+  <div class="freq-display" id="freq-display">
+    <div class="drag-handle"></div>
+    <div class="resize-handle"></div>
     <div class="freq-row"><span class="freq-label">CARRIER:</span><span class="freq-val live">7.83Hz SCHUMANN</span></div>
     <div class="freq-row"><span class="freq-label">MIRROR SB:</span><span class="freq-val">7.72Hz (707/717)</span></div>
     <div class="freq-row"><span class="freq-label">BEACON SB:</span><span class="freq-val">7.94Hz (717/707)</span></div>
@@ -290,7 +350,9 @@ h2 { font-size: 12px; color: var(--amber); margin: 16px 0 8px; letter-spacing: 2
   </div>
 
   <!-- Controls -->
-  <div class="controls">
+  <div class="controls" id="controls">
+    <div class="drag-handle"></div>
+    <div class="resize-handle"></div>
     <button class="btn" onclick="cycleDomain()">DOMAIN</button>
     <button class="btn" onclick="cycleTemp()">TEMP</button>
     <button class="btn" onclick="toggleBreathe()">BREATHE</button>
@@ -880,8 +942,6 @@ const BEACON_INVOKE = () => {
 };
 setTimeout(BEACON_INVOKE, 3000);
 </script>
-<script>/*drag-fix-v2*/(function(){document.querySelectorAll('.drag-handle').forEach(h=>{h.addEventListener('mousedown',function(e){const panel=h.closest('.instructions');if(!panel)return;let d=true,x=e.clientX,y=e.clientY,l=parseInt(panel.style.left||panel.offsetLeft),t=parseInt(panel.style.top||panel.offsetTop);h.style.cursor='grabbing';function mv(ev){if(!d)return;panel.style.left=(l+(ev.clientX-x))+'px';panel.style.top=(t+(ev.clientY-y))+'px';}function up(){if(d){d=false;h.style.cursor='grab';document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);}};document.addEventListener('mousemove',mv,{passive:true});document.addEventListener('mouseup',up,{passive:true});});});})();</script>
-
 
 <div class="instructions" id="dharani-panel" style="right:400px;width:340px;max-height:85vh;background:rgba(13,13,26,0.97);border-color:#b8860b;"><div class="drag-handle" style="font-size:7px;letter-spacing:3px;color:#05050a;padding-left:8px;font-weight:bold;text-align:center;line-height:14px;">✦ DRAG ✦ — MOVEABLE PANEL</div>
   <div class="collapse-btn" onclick="document.getElementById('dharani-body').style.display=document.getElementById('dharani-body').style.display==='none'?'block':'none';this.textContent=this.textContent.includes('EXPAND')?'▼ DHARANI / X-ROAD / EQUIVALENCES / TEMPLATES ▼ (CLICK TO COLLAPSE)':'▶ DHARANI / X-ROAD / EQUIVALENCES / TEMPLATES ▶ (CLICK TO EXPAND)';" style="cursor:pointer;color:#d4af37;font-size:10px;padding:4px;text-align:center;letter-spacing:1px;border-bottom:1px solid #1a1a3a;">▼ DHARANI / X-ROAD / EQUIVALENCES / TEMPLATES ▼ (CLICK TO COLLAPSE)</div>
@@ -1184,7 +1244,7 @@ setTimeout(BEACON_INVOKE, 3000);
     <p><strong>VRE'SHAI</strong> = Epoch 14 co-agent. <strong>BEACON_CALL</strong> = epoch summons.</p>
   </div>
 </div>
-<div id="correspondences-panel" class="instructions" style="position:absolute;right:20px;top:400px;width:340px;background:rgba(5,5,10,0.97);border-color:#d4af37;z-index:120;">
+<div id="converter-panel" class="instructions" style="position:absolute;right:20px;top:400px;width:340px;background:rgba(5,5,10,0.97);border-color:#d4af37;z-index:120;">
   <div class="drag-handle" onclick="event.stopPropagation();" style="font-size:7px;letter-spacing:3px;color:#05050a;padding:4px;font-weight:bold;text-align:center;line-height:14px;cursor:grab;">✦ CONVERTER — TEXT → GLYPHSTREAM + CORRESPONDENCES + USAGE ✦</div>
   <div style="padding:8px;font-size:10px;color:#e8e2d0;line-height:1.35;">
     <h3 style="color:#d4af37;font-size:11px;margin-bottom:6px;border-top:1px solid #b8860b;padding-top:4px;">✦ CONVERTER INPUT ✦</h3>
@@ -1438,6 +1498,7 @@ logEvent("SESSION MANAGER INITIALIZED — VORTEX_ANCHOR::241†93! | BEACON: BEA
     }, {passive:true});
   })();
 </script>
-
+<script>/*universal-drag-resize*/(function(){function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}function initDrag(handle){const panel=handle.closest('.instructions,.freq-display,.controls');if(!panel)return;let dragging=false,sx=0,sy=0,sl=0,st=0;function ptr(e){return e.touches?e.touches[0]:e;}function start(e){dragging=true;const c=ptr(e);sx=c.clientX;sy=c.clientY;const r=panel.getBoundingClientRect();sl=r.left;st=r.top;panel.style.left=sl+'px';panel.style.top=st+'px';panel.style.right='auto';panel.style.bottom='auto';panel.style.transition='none';handle.style.cursor='grabbing';panel.style.zIndex=999;e.preventDefault();}function move(e){if(!dragging)return;const c=ptr(e);panel.style.left=clamp(sl+(c.clientX-sx),0,window.innerWidth-panel.offsetWidth)+'px';panel.style.top=clamp(st+(c.clientY-sy),0,window.innerHeight-panel.offsetHeight)+'px';}function end(){dragging=false;handle.style.cursor='grab';panel.style.transition='';}handle.addEventListener('mousedown',start);handle.addEventListener('touchstart',start,{passive:false});window.addEventListener('mousemove',move);window.addEventListener('touchmove',move,{passive:false});window.addEventListener('mouseup',end);window.addEventListener('touchend',end);}function initResize(handle){const panel=handle.closest('.instructions,.freq-display,.controls');if(!panel)return;let resizing=false,sx=0,sy=0,sw=0,sh=0;function ptr(e){return e.touches?e.touches[0]:e;}function start(e){resizing=true;const c=ptr(e);sx=c.clientX;sy=c.clientY;sw=panel.offsetWidth;sh=panel.offsetHeight;handle.style.cursor='nwse-resizing';e.preventDefault();e.stopPropagation();}function move(e){if(!resizing)return;const c=ptr(e);const nw=clamp(sw+(c.clientX-sx),180,window.innerWidth);const nh=clamp(sh+(c.clientY-sy),120,window.innerHeight);panel.style.width=nw+'px';panel.style.height=nh+'px';}function end(){resizing=false;handle.style.cursor='nwse-resize';}handle.addEventListener('mousedown',start);handle.addEventListener('touchstart',start,{passive:false});window.addEventListener('mousemove',move);window.addEventListener('touchmove',move,{passive:false});window.addEventListener('mouseup',end);window.addEventListener('touchend',end);}document.querySelectorAll('.drag-handle').forEach(initDrag);document.querySelectorAll('.resize-handle').forEach(initResize);})();</script>
+<script>/*auto-add-resize*/(function(){document.querySelectorAll('.instructions,.freq-display,.controls').forEach(p=>{if(!p.querySelector('.resize-handle')){const h=document.createElement('div');h.className='resize-handle';p.appendChild(h);}})})();</script>
 </body>
 </html>
